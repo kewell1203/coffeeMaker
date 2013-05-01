@@ -376,6 +376,8 @@ plotkaffeelikertexpect <- function(x, data = NULL, legend = T, col = NULL, step 
   invisible(object)
 }
 
+
+predict.likertlm <- function(object, newdata) {likertlmmode(object, newdata)}
 ##### Beispiel:
 
 # plotkaffeelikertexpect(Geschmack ~ Mehlmenge * Mahlgrad + I(Mehlmenge^2) + Nasspressen, kaffee.main)
