@@ -379,9 +379,9 @@ plotkaffeelikertexpect <- function(x, data = NULL, legend = T, col = NULL, step 
 ##### Beispiel:
 
 # plotkaffeelikertexpect(Geschmack ~ Mehlmenge * Mahlgrad + I(Mehlmenge^2) + Nasspressen, kaffee.main)
-
-##### Beispiel:
-
+# 
+# #### Beispiel:
+# 
 # model.Suesse <- likertlm(Suesse ~ Mehlmenge + Mahlgrad + Nasspressen, kaffee.main0)
 # model.Saeure <- likertlm(Saeure ~ Mehlmenge + Mahlgrad + Nasspressen, kaffee.main0)
 # model.Bitterkeit <- likertlm(Bitterkeit ~ Mehlmenge + Mahlgrad + Nasspressen, kaffee.main0)
