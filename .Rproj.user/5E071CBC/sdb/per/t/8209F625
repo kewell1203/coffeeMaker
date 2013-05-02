@@ -1,0 +1,16 @@
+{
+    "contents" : "likertlmselectmod<-function(fm, data, newdata = NULL, slices = nrow(data), \n                    grad, partGrads, ...){\n  if(any(grad<partGrads)){\n    stop(\"partGrads must less than grad \")\n  }\n  \n  fm <- as.formula(fm)\n  independents <- attr(terms(fm), \"term.labels\")\n  dependent <- as.character(attr(terms(fm), \"variables\")[[2]])\n  data<-na.omit(data[,c(dependent,independents)])\n  \n  t<-as.matrix(expand.grid(lapply(partGrads,function(x){seq(0,x)})))\n  t<-t[rowSums(t)>0&rowSums(t)<=grad,]\n  \n  formset<- function(args ,vec){\n    res<-NULL\n    res<-args[vec==1]\n    if(any(vec>1)){\n      agt1<-args[vec>1]\n      ggt1<-vec[vec>1]\n      pre<-paste(\"I(\",agt1,\"^\",ggt1,\")\",sep=\"\")\n      res<-c(res,pre)\n    }\n    if(length(res)==1){\n      return(res)\n    }else{\n      res<-paste(res,collapse=\":\")\n      return(res)\n    }\n  }\n  \n  require(rje)\n  fset<-powerSet(apply(t,1,function(x){formset(independents,x)}))\n  fset[[1]]<-NULL\n  forms<-lapply(fset,function(x){paste(dependent,\"~\",paste(x,collapse=\"+\",sep=\"\"))})\n  forms<-unlist(forms)\n  \n  res <- sapply(forms, \n                function(f) {\n                  fit<-likertlm(f, data=data)\n                  fit$call[[\"formula\"]] <- as.formula(f)\n                  res<-crossvalid(fit, slices=slices)\n                  mse<-res$mse\n                  c(f,mse)\n                }\n                )\n  \n  res<-t(as.matrix(res))\n  rownames(res)<-NULL\n  colnames(res)<-c(\"formula\",\"crossvalidated mse\")\n  res<-res[order(res[,c(\"crossvalidated mse\")]),]\n  return(res)\n}",
+    "created" : 1357212011391.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "712367184",
+    "id" : "8209F625",
+    "lastKnownWriteTime" : 1357219265,
+    "path" : "~/Workspace/SHK@FZI/coffeeMaker/code/likertlmselectmod.R",
+    "properties" : {
+        "tempName" : "Untitled1"
+    },
+    "source_on_save" : false,
+    "type" : "r_source"
+}

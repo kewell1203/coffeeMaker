@@ -1,0 +1,15 @@
+{
+    "contents" : "mse <- function(model, data) {\n  if (missing(data) || is.null(data))\n    data <- model$model\n  p <- predict(model, data)\n  o <- model.response(model.frame(model$terms, data))\n  o <- o[names(p)]\n  r <- na.omit(o - p)\n  sum(r^2)/length(r)\n}\n\nrecalculate <- function(model, data) {\n  if (missing(data) || is.null(data))\n    data <- model$model\n  call <- model$call\n  call[[\"data\"]] <- as.name(\"data\")\n  eval(call)\n}\n\ncrossvalid <- function (x, data = NULL, slices, random, newdata = NULL) {\n  require(plyr)\n  if (is.formula(x) && !is.null(data)) {\n    call <- as.call(list(as.name(\"lm\"), formula = deparse(substitute(x)), data = as.name(\"data\")))\n    model <- eval(call)\n  }\n  else\n    model <- x\n  ##我的修改\n  data <- eval(model$call$data)\n  if (missing(slices) || is.null(slices)) {\n    slices <- NROW(data)\n    random <- FALSE    \n  } else if (missing(random) || is.null(random))\n    random <- TRUE\n  size <- nrow(data)\n  isel <- if (random) sample.int(size) else seq(1:size)\n  ssel <- (((seq(1:size) - 1) * slices) %/% size) + 1\n  msevec <- sapply(1:slices, function(s) {\n    i <- isel[ssel == s]\n    modd <- data[-i,]\n    vald <- data[i,]\n    vmodel <- recalculate(model, modd)\n    mse(vmodel, vald)\n  })\n  msemean <- mean(msevec, na.rm=T)\n  result <- list(mse = msemean, rmse = sqrt(msemean), msevec = msevec, model = model)\n  if (!is.null(newdata))\n    result$newmse <- mse(model, newdata)\n  class(result) <- \"crossvalid\"\n  return(result)\n}\n\nprint.crossvalid <- function (x, ...) {\n  cat(\"Crossvalidation of model\\n\")\n  cat(\"   formula: \", deparse(x$model$terms), \"\\n\")\n  cat(\"crossvalidation MSE : \", x$mse, \"\\n\")\n  cat(\"   square-root      : \", x$rmse, \"\\n\")\n  if (!is.null(x$newmse))\n    cat(\"new data MSE        :\", x$newmse, \"\\n\")\n  invisible(x)\t\n}\n",
+    "created" : 1357208357610.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "3481570575",
+    "id" : "975A71B0",
+    "lastKnownWriteTime" : 1357220960,
+    "path" : "~/Workspace/SHK@FZI/coffeeMaker/code/crossvalid.R",
+    "properties" : {
+    },
+    "source_on_save" : false,
+    "type" : "r_source"
+}

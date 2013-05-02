@@ -1,0 +1,32 @@
+Package: coffeemachine
+Title: A coffeemaker R package
+Version: 0.0.0
+Date: 2012-08-24
+Author: Zhu Ke
+Maintainer: Ke Zhu <kewell1203@gmail.com>
+Description: this is...
+Depends:
+    R (>= 2.14.1)
+Imports:
+    lattice,
+    zoo,
+    ggplot2,
+    reshape
+License: GPL (>= 2)
+URL: https://github.com/kewell1203/coffeeMachine
+BugReports: https://github.com/kewell1203/coffeeMachine/issues
+Collate:
+    'compliance.qual.R'
+    'drawkaffee.R'
+    'drawPie.kaffee.R'
+    'func.Bitterkeit.R'
+    'func.Geschmack.R'
+    'func.Koerper.R'
+    'func.Saeure.R'
+    'func.Suesse.R'
+    'kaffee.optim.plot.R'
+    'kaffee.optim.R'
+    'kaffee.qual.R'
+    'kaffee.splom.panel.R'
+    'maxval.R'
+    'pred.data.R'
