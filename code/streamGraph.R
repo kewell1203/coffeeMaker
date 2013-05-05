@@ -1,4 +1,3 @@
-
 streamPlot <- function(data, pi, spline.steps) {
   # Color palette
 #   nColors <- 10
@@ -39,11 +38,8 @@ streamPlot <- function(data, pi, spline.steps) {
     }
   }
   
-  
-  
-  # Convert sorted data to splines.
-  
-  # Helper function to change negative valus to zero
+ 
+  # Helper function to change negative values to zero
   zeroNegatives <- function(x) { 
     if (x < 0) { return(0) }
     else { return(x) }
@@ -87,11 +83,7 @@ streamPlot <- function(data, pi, spline.steps) {
   plot(1:10, 1:10, type="n", xlim=c(1, length(smoothData[1,])), ylim=c(yLower, yUpper), axes=FALSE, xlab=NA, ylab=NA)
   for (i in 1:length(smoothData[,1])) {
     #colindex <- floor( (nColors-2) * ( (maxRow - sum(smoothData[i,])) / rowSpan ) ) + 1
-    
-    
-    
     polygon(c(1:length(smoothData[i,]), length(smoothData[i,]):1), c(smoothData[i,] + yOffset, rev(yOffset)), col=colors[colorindex[i]], border="#ffffff", lwd=0.2)
-    
     yOffset <- yOffset + smoothData[i,]
   }
   
@@ -101,20 +93,25 @@ streamMatrix<-function(Mahlgrad=x,Mehlmenge=y, pi=pi){
   n <- length(pi)
   m<-matrix(0,n,5)
   for(i in 1 : n)
-  m[i,]<-sapply(-2:2, function(z) do.call('likertlmprob', list(as.name(paste("model.",pi[i],sep="")),data.frame(Mahlgrad, Mehlmenge, Nasspressen=20, Suesse=z, Bitterkeit=z, Saeure=z, Koerper=z, Geschmack=z))))
+  m[i,]<-sapply(-2:2, function(z) do.call('likertlmprob', list(as.name(paste("model.",pi[i],sep="")),data.frame(Mahlgrad, Mehlmenge, Nasspressen=20, Suesse=z, Bitterkeit=z, Saeure=z, Koerper=z, Geschmack=z)),envir=parent.frame(4)))
   return(m)
 }
 
-streamGraphplot <- function(plot.all=FALSE, plotitem=c("Suesse", "Saeure", "Bitterkeit", "Koerper", "Geschmack"), steps.x=7, steps.y=5,  from.x=0, 
-                              to.x=3, from.y = 50, to.y =90, spline.steps=100, plot.margin=c(1,1,1,1), ...)
+streamGraphplot <- function(form.postfix, data, plot.all=FALSE, plotitem=c("Suesse", "Saeure", "Bitterkeit", "Koerper", "Geschmack"), steps.x=7, steps.y=5,  from.x=0, 
+                              to.x=3, from.y = 50, to.y =90, spline.steps=100, plot.margin=c(1,1,1,1),...)
 
   {
-  model.Suesse <- likertlm(Suesse ~ Mehlmenge + Mahlgrad + Nasspressen, kaffee.main0)
-  model.Saeure <- likertlm(Saeure ~ Mehlmenge + Mahlgrad + Nasspressen, kaffee.main0)
-  model.Bitterkeit <- likertlm(Bitterkeit ~ Mehlmenge + Mahlgrad + Nasspressen, kaffee.main0)
-  model.Koerper <- likertlm(Koerper ~ Mehlmenge + Mahlgrad + Nasspressen, kaffee.main0)
-  model.Geschmack <- likertlm(Geschmack ~ Mehlmenge + Mahlgrad + Nasspressen, kaffee.main0)
+  model.Suesse <- do.call('likertlm', list(paste("Suesse~",form.postfix,sep=""), data))
+  model.Saeure <- do.call('likertlm', list(paste("Saeure~",form.postfix,sep=""), data))
+  model.Bitterkeit <- do.call('likertlm', list(paste("Bitterkeit~",form.postfix,sep=""), data))
+  model.Koerper <- do.call('likertlm', list(paste("Koerper~",form.postfix,sep=""), data))
+  model.Geschmack <- do.call('likertlm', list(paste("Geschmack~",form.postfix,sep=""), data))
 
+#   model.Suesse <- likertlm(Suesse ~ Mehlmenge^2 + Mahlgrad^2 + Nasspressen, kaffee.main0)
+#   model.Saeure <- likertlm(Saeure~Mahlgrad^2 + Mehlmenge^2 + Nasspressen, kaffee.main0)
+#   model.Bitterkeit<-likertlm(Bitterkeit~Mahlgrad^2 + Mehlmenge^2 + Nasspressen, kaffee.main0)
+#   model.Koerper <- likertlm(Koerper~Mahlgrad^2 + Mehlmenge^2 + Nasspressen, kaffee.main0)
+#   model.Geschmack <- likertlm(Geschmack~Mahlgrad^2 + Mehlmenge^2 + Nasspressen, kaffee.main0)
   if(plot.all)
     pi<-c("Suesse","Saeure","Bitterkeit","Koerper","Geschmack")
   else{
@@ -123,8 +120,8 @@ streamGraphplot <- function(plot.all=FALSE, plotitem=c("Suesse", "Saeure", "Bitt
   mameGrid<-expand.grid(seq(from.x,to.x,length.out=steps.x),seq(from.y,to.y,length.out=steps.y))
   resMatrix<-apply(mameGrid,1,function(x) streamMatrix(x[1],x[2],pi=pi))
   par(mfrow=c(steps.y, steps.x),mar=plot.margin)
-for (i in 1 : ncol(resMatrix) ) {
-  streamPlot(matrix(resMatrix[,i],ncol=5), pi, spline.steps)
-}
+  for (i in 1 : ncol(resMatrix) ) {
+    streamPlot(matrix(resMatrix[,i],ncol=5), pi, spline.steps)
+  }
   
 }
