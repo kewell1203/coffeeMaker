@@ -1,0 +1,37 @@
+\documentclass[a4paper]{report}
+\usepackage{ngerman}
+\usepackage{geometry}
+
+\begin{document}
+<<setup, include=FALSE, cache=FALSE>>=
+opts_chunk$set(fig.path='./', fig.align='center', fig.show='hold')
+options(replace.assign=TRUE,width=90)
+@
+
+F\"ur das Diagramm benutze ich kaffee data, die "Breite" jeweiliger Farbe bedeutet wie hoch von Wahrlichkeit wird eine Merkmale in bestimmte skalar beurteilt (z.B,ich benutze likertlm model,y-Koordinate: Wahrscheinlichkeit,x-Koordinate: -2:2),  Mahlgrad und Mehlmenge sind variieret auf eine Grid von dem Wert, dann es erzeugt eine Serie von
+diese Stream Graph.\\
+ein streamGraph f"ur das einzele Beobachtung Suesse:
+<<loading,echo=FALSE>>=
+source("../code/kaffeeAllData.R")
+source("../code/likert.R")
+source("../code/streamGraph.R")
+@
+
+<<plot_suesse>>=
+streamGraphplot(form.postfix="Mahlgrad^2+Mehlmenge^2+Mahlgrad:Mehlmenge+Nasspressen",
+data=kaffee.main0,plotitem="Suesse")
+@
+\newpage
+oder f\"ur die Bitterkeit und K\"orper
+<<plot_bitandkoe>>=
+streamGraphplot(form.postfix="Mahlgrad^2+Mehlmenge^2+
+                Mahlgrad:Mehlmenge+Nasspressen", data=kaffee.main0,plotitem=c("Bitterkeit","Koerper"))
+@
+\newpage
+oder f\"ur alle Beobachtung
+<<plot_all>>=
+streamGraphplot(form.postfix="Mahlgrad^2+Mehlmenge^2+Mahlgrad:Mehlmenge+Nasspressen", data=kaffee.main0,
+                plot.all=TRUE)
+@
+
+\end{document}
